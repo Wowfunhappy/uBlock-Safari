@@ -246,6 +246,7 @@ const onMessage = function(request, sender, callback) {
                 response.cnameUncloakEnabled = undefined;
             }
             response.canLeakLocalIPAddresses =
+                µb.privacySettingsSupported &&
                 vAPI.browserSettings.canLeakLocalIPAddresses === true;
         }
         break;
