@@ -313,8 +313,20 @@ if ( safari && safari.self && typeof safari.self.hide === 'function' ) {
         if ( height !== 0 && popover.height !== height ) { popover.height = height; }
     };
     self.addEventListener('DOMContentLoaded', ( ) => {
-        document.documentElement.style.setProperty('width', 'max-content');
-        new ResizeObserver(resize).observe(document.documentElement);
+        const root = document.documentElement;
+        root.style.setProperty('width', 'max-content');
+        // Section toggles change the content before ResizeObserver delivers its
+        // notification. Size the native window in the mutation microtask so the
+        // expanded content and its window are ready for the same paint.
+        new MutationObserver(resize).observe(root, {
+            attributes: true,
+            attributeFilter: [ 'class', 'style', 'data-more', 'data-ui' ],
+            childList: true,
+            characterData: true,
+            subtree: true,
+        });
+        // Font loading can change the preferred size without a DOM mutation.
+        new ResizeObserver(resize).observe(root);
         resize();
     }, { once: true });
 }
@@ -923,6 +935,7 @@ const browserActionUpdate = (( ) => {
     };
 
     const stateFor = tabID => Object.assign({}, defaults, perTab.get(tabID));
+    const canFilterTab = tab => tab && /^https?:\/\//i.test(tab.url || '');
 
     const update = ( ) => {
         for ( const item of extension.toolbarItems ) {
@@ -936,8 +949,9 @@ const browserActionUpdate = (( ) => {
             const badge = badgeNumber(state.badgeText);
             if ( item.badge !== badge ) { item.badge = badge; }
             if ( item.toolTip !== state.title ) { item.toolTip = state.title; }
-            if ( item.disabled !== (state.enabled === false) ) {
-                item.disabled = state.enabled === false;
+            const disabled = state.enabled === false || !canFilterTab(win && win.activeTab);
+            if ( item.disabled !== disabled ) {
+                item.disabled = disabled;
             }
         }
     };
@@ -952,6 +966,8 @@ const browserActionUpdate = (( ) => {
 
     browser.tabs.onRemoved.addListener(tabID => { perTab.delete(tabID); });
     application.addEventListener('validate', update, true);
+    application.addEventListener('navigate', update, true);
+    self.setTimeout(update, 0);
 
     browser.browserAction = {
         setTitle: setter((state, details) => { state.title = details.title || ''; }),
