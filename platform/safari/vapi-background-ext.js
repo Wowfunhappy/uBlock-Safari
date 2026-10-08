@@ -163,17 +163,3 @@ vAPI.scriptletsInjector = (( ) => {
 })();
 
 /******************************************************************************/
-
-// Safari's Extensions preferences show the extension's settings only: its
-// "Open uBlock Origin's dashboard" checkbox opens the dashboard.
-
-{
-    const settings = self.safari.extension.settings;
-    settings.addEventListener('change', ev => {
-        if ( ev.key !== 'open_prefs' || ev.newValue !== true ) { return; }
-        settings.open_prefs = false;
-        vAPI.tabs.open({ url: 'dashboard.html', select: true, index: -1 });
-    });
-}
-
-/******************************************************************************/

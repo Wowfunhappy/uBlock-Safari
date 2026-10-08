@@ -18,7 +18,6 @@ echo "*** uBlock0.safariextension: Copying safari-specific files"
 cp platform/safari/*.js           $DES/js/
 cp -R platform/safari/img         $DES/
 cp platform/safari/Info.plist     $DES/
-cp platform/safari/Settings.plist $DES/
 cp platform/chromium/manifest.json $DES/
 cp $DES/img/icon_128.png          $DES/Icon.png
 cp $DES/img/icon_64.png           $DES/Icon-64.png
@@ -29,6 +28,13 @@ cp $DES/img/icon_32.png           $DES/Icon-32.png
 echo "*** uBlock0.safariextension: Loading browser-safari.js in extension pages"
 for page in $DES/*.html $DES/web_accessible_resources/*.html; do
     perl -0pi -e 's#(<script src="((?:\.\./)?)js/vapi\.js"></script>)#<script src="$2js/browser-safari.js"></script>\n$1#' "$page"
+done
+
+# Safari 7 serves SVG extension resources as text/xml, which WebKit cannot
+# decode as an image. Use the existing PNG logo in the extension's pages.
+echo "*** uBlock0.safariextension: Using PNG page logos"
+for page in $DES/*.html $DES/web_accessible_resources/*.html; do
+    perl -0pi -e 's#img/ublock\.svg#img/icon_128.png#g' "$page"
 done
 
 # Safari 7 serves an extension file only when its name has an extension, and

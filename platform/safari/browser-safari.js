@@ -578,6 +578,40 @@ const unbindTab = tabID => {
     tabStatus.delete(tabID);
 };
 
+// Safari's tab URL setter lowercases extension identifiers, which its
+// extension loader treats as case-sensitive. Navigate extension pages through
+// WebKit instead. A new Safari tab first needs a WebKit tab id: a unique blank
+// URL lets onUpdated identify it without depending on event ordering.
+const navigateSafariTab = async (safariTab, url) => {
+    if ( url.startsWith(baseURI) === false ) {
+        safariTab.url = url;
+        return;
+    }
+    let tabId = idBySafariTab.get(safariTab);
+    if ( tabId === undefined ) {
+        tabId = await new Promise((resolve, reject) => {
+            const marker = `about:blank#uBO-${self.crypto.randomUUID()}`;
+            const cleanup = ( ) => {
+                nativeTabs.onUpdated.removeListener(onUpdated);
+                self.clearTimeout(timer);
+            };
+            const onUpdated = (id, changeInfo, tab) => {
+                if ( (changeInfo.url || (tab && tab.url)) !== marker ) { return; }
+                cleanup();
+                bindTab(id, safariTab);
+                resolve(id);
+            };
+            const timer = self.setTimeout(( ) => {
+                cleanup();
+                reject(new Error('Could not identify the new Safari tab.'));
+            }, 10000);
+            nativeTabs.onUpdated.addListener(onUpdated);
+            safariTab.url = marker;
+        });
+    }
+    await nativeTabs.update(tabId, { url });
+};
+
 {
     const IDENTITY = 'uBO:tab-identity';
     const fromPage = new Map();
@@ -707,13 +741,13 @@ Object.assign(browser.windows, {
     getCurrent: api(( ) => windowFromSafariWindow(application.activeBrowserWindow)),
     getLastFocused: api(( ) => windowFromSafariWindow(application.activeBrowserWindow)),
     getAll: api(( ) => Array.from(application.browserWindows).map(windowFromSafariWindow)),
-    create: api((details = {}) => {
+    create: api(async (details = {}) => {
         const win = application.openBrowserWindow();
         const urls = Array.isArray(details.url) ? details.url : [ details.url ];
-        urls.filter(url => typeof url === 'string').forEach((url, i) => {
+        for ( const [ i, url ] of urls.filter(url => typeof url === 'string').entries() ) {
             const tab = i === 0 ? win.activeTab : win.openTab('background');
-            tab.url = resolveExtensionURL(url);
-        });
+            await navigateSafariTab(tab, resolveExtensionURL(url));
+        }
         if ( details.focused !== false ) { win.activate(); }
         return windowFromSafariWindow(win);
     }),
@@ -771,7 +805,7 @@ Object.assign(browser.tabs, {
     }),
     getCurrent: api(( ) => undefined),
     query: api(tabsQuery),
-    create: api((details = {}) => {
+    create: api(async (details = {}) => {
         let win = safariWindowFromID(details.windowId);
         if ( win === undefined ) { win = application.activeBrowserWindow; }
         if ( win === undefined || win === null ) { win = application.openBrowserWindow(); }
@@ -784,7 +818,7 @@ Object.assign(browser.tabs, {
             ? win.openTab(active ? 'foreground' : 'background', index)
             : win.openTab(active ? 'foreground' : 'background');
         if ( typeof details.url === 'string' ) {
-            safariTab.url = resolveExtensionURL(details.url);
+            await navigateSafariTab(safariTab, resolveExtensionURL(details.url));
         }
         return {
             windowId: idForWindow(win),
@@ -809,7 +843,7 @@ Object.assign(browser.tabs, {
         if ( typeof details.url === 'string' ) {
             const url = resolveExtensionURL(details.url);
             if ( safariTab !== undefined ) {
-                safariTab.url = url;
+                await navigateSafariTab(safariTab, url);
             } else {
                 await nativeTabs.update(id, { url });
             }

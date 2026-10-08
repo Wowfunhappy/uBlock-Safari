@@ -70,7 +70,9 @@
     <key>Description</key>
     <string>{description}</string>
     <key>DeveloperIdentifier</key>
-    <string>WDAOQFIKHZ</string>
+    <string>U5LEPOL722</string>
+    <key>Update Manifest URL</key>
+    <string>https://mavericksforever.com/safari-extensions-gallery/updates.plist</string>
     <key>ExtensionInfoDictionaryVersion</key>
     <string>1.0</string>
     <key>Permissions</key>
