@@ -1,3 +1,65 @@
+- [[picker] Fix unpleasant flickering of mouse cursor in picking mode](https://github.com/gorhill/uBlock/commit/765c51daa1)
+- [[scriptlets] Add (back) support for path-based targets](https://github.com/gorhill/uBlock/commit/a23b117141)
+- [[security] Use shadow DOM when programmatically injecting scriptlets](https://github.com/gorhill/uBlock/commit/e743ee760f)
+- [[security] Conceal DOM of overlay-based tools inside a shadow DOM](https://github.com/gorhill/uBlock/commit/1765528bec)
+
+----------
+
+# 1.76.4
+
+- [[security] Address remaining reported security issues](https://github.com/gorhill/uBlock/commit/5466554104)
+- [[generic cosmetic filtering] Fix extraneous function argument](https://github.com/gorhill/uBlock/commit/e8efba123b)
+- [[filter parser] Non-leading tag names must be preceded by whitespace](https://github.com/gorhill/uBlock/commit/a63712e39c)
+- [[security] Removed no longer used warOrigin/warSecret](https://github.com/gorhill/uBlock/commit/73ef1b23f7)
+
+----------
+
+# 1.76.2
+
+- [[diff updater] Use canonical patch URL to prevent duplicate fetches](https://github.com/gorhill/uBlock/commit/736ef4d100)
+- [[element picker] Increase delay before establishing communication](https://github.com/gorhill/uBlock/commit/f00b8ae693)
+- [[firefox] Update fallback version extraction to 128](https://github.com/gorhill/uBlock/commit/3a0c64184d)
+- [Improve `json-edit` scriptlet](https://github.com/gorhill/uBlock/commit/d4d6e75001)
+
+----------
+
+# 1.76.0
+
+- [[security] "Universal XSS from website-driven element picker"](https://github.com/gorhill/uBlock/commit/cbb22a5eee)
+- [Prevent `war:`-related filters for the time being](https://github.com/gorhill/uBlock/commit/150df125fd)
+- [Validate about to be created filter in element picker](https://github.com/gorhill/uBlock/commit/b1f7d27c87)
+- [Prevent re-entrancy with recursive operator in JSONPath](https://github.com/gorhill/uBlock/commit/b6fec9089f)
+- [Improve `[trusted-]edit-inbound-object` scriptlet](https://github.com/gorhill/uBlock/commit/a20cfcebd8)
+- [Add support for iso-8850-2 in response body filtering code](https://github.com/gorhill/uBlock/commit/ca7aa6c55f)
+- [Improve `trusted-prevent-dom-bypass` scriptlet](https://github.com/gorhill/uBlock/commit/1492d7f979)
+- [Improve `JSONPath`](https://github.com/gorhill/uBlock/commit/006dfc4da9)
+- [Improve `googletagservices_gpt.js` shim](https://github.com/gorhill/uBlock/commit/f609ebc5e9)
+- [Add `freestar_pubfig.js` shim](https://github.com/gorhill/uBlock/commit/341f23df9c)
+- [Fix parsing of `permissions` filter option](https://github.com/gorhill/uBlock/commit/bb2e13b3c6)
+- [Improve `googlesyndication_adsbygoogle.js` shim](https://github.com/gorhill/uBlock/commit/4dddc2adb0)
+- [Use new `publicSuffix` API when available](https://github.com/gorhill/uBlock/commit/a67ea6acdd)
+- [Add `trusted-edit-inbound-element` sriptlet](https://github.com/gorhill/uBlock/commit/1afbde2e7a)
+- [Refactor scriptlet injection code](https://github.com/gorhill/uBlock/commit/9af8ef4c6b)
+- [Improve jsonl-edit-fetch-response/jsonl-edit-xhr-response scriptlets](https://github.com/gorhill/uBlock/commit/42bcca027b)
+- [Export "My filters" content as an array in JSON backup file](https://github.com/gorhill/uBlock/commit/80f5a99fe4)
+- [Improve `prevent-clipboard-write` scriptlet](https://github.com/gorhill/uBlock/commit/e530864c46)
+
+----------
+
+# 1.75.4
+
+- [Launch element picker only with a verified secret token](https://github.com/gorhill/uBlock/commit/9859477ebc)
+
+----------
+
+# 1.75.2
+
+- [Avoid use of potentially tainted XHR methods in scriptlets](https://github.com/gorhill/uBlock/commit/9a083e7e54)
+
+----------
+
+# 1.75.0
+
 - [Improve `remove-attr` scriptlet](https://github.com/gorhill/uBlock/commit/bd98bcace0)
 - [Fix parsing of invalid regex-like domain in static extended filters](https://github.com/gorhill/uBlock/commit/bfbd7f609e)
 - [Improve `remove-node-text`/`replace-node-text` scriptlets](https://github.com/gorhill/uBlock/commit/71faa0b23f)
